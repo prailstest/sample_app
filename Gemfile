@@ -9,9 +9,15 @@ gem 'pg'
 
 group :test, :development do
 	gem 'rspec-rails'
+  gem 'guard-rspec'  
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i  
+  gem 'growl'
 end
 group :test do
 	gem 'capybara'
+  gem 'guard-spork'
+  gem 'spork'
+  gem 'ruby_gntp'
 end
 
 
