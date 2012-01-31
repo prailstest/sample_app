@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.1'
+gem 'bcrypt-ruby'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -19,7 +20,9 @@ group :test do
   gem 'spork'
   gem 'ruby_gntp'
 end
-
+group :development do 
+  gem 'annotate', '~> 2.4.1.beta'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
