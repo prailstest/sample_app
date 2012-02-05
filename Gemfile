@@ -19,6 +19,7 @@ group :test do
   gem 'guard-spork'
   gem 'spork'
   gem 'ruby_gntp'
+  gem 'factory_girl_rails'
 end
 group :development do 
   gem 'annotate', '~> 2.4.1.beta'
