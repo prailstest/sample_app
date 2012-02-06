@@ -28,6 +28,12 @@ describe User do
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:authenticate) }
+  it { should respond_to(:remember_token) }
+
+  describe "remember token" do 
+    before { @user.save }
+    its(:remember_token) { should_not be_blank }
+  end
 
 #  it "should not save with an empty name" do
 #    user = User.new(name: "", email: "user@example.com")
