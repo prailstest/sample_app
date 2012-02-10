@@ -1,4 +1,13 @@
 class UsersController < ApplicationController
+
+  before_filter :signed_in_user, only: [:edit, :update, :index, :destroy]
+  before_filter :correct_user, only: [:edit, :update]
+  before_filter :admin_only, only: [:destroy]
+
+  def index 
+    @users = User.paginate(page: params[:page], per_page: 10)
+  end
+
   def new
     @user = User.new
   end
@@ -17,5 +26,38 @@ class UsersController < ApplicationController
   def show 
     @user = User.find(params[:id])
   end
+
+  def edit
+  end
+
+  def update
+    if @user.update_attributes(params[:user])
+      flash[:success] = "Profile successfully updated."
+      redirect_to @user
+    else
+      render 'edit'
+    end
+  end
+
+  def destroy 
+    @user = User.find(params[:id])
+    @user.destroy
+    redirect_to users_path, flash: { success: "User #{@user.name} destroyed." }
+  end
+
+
+  private
+
+  def signed_in_user
+    store_location
+    redirect_to signin_path, notice: "Please sign in to access this page." unless signed_in?
+  end
+
+  def correct_user 
+    @user = User.find(params[:id])
+    redirect_to signin_path, flash: { error: "You don't have permission to change this." } unless current_user?(@user)
+  end
+
+
 
 end
