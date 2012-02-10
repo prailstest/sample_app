@@ -3,9 +3,10 @@ class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:edit, :update, :index, :destroy]
   before_filter :correct_user, only: [:edit, :update]
   before_filter :admin_only, only: [:destroy]
+  before_filter :anonymous_only, only: [:new, :create]
 
   def index 
-    @users = User.paginate(page: params[:page], per_page: 10)
+    @users = User.paginate(page: params[:page])
   end
 
   def new
@@ -41,16 +42,22 @@ class UsersController < ApplicationController
 
   def destroy 
     @user = User.find(params[:id])
-    @user.destroy
-    redirect_to users_path, flash: { success: "User #{@user.name} destroyed." }
+    if current_user?(@user) && current_user.admin?
+      redirect_to root_path, flash: { error: "Unable to delete your own administrator account." }
+    else
+      @user.destroy
+      redirect_to users_path, flash: { success: "User #{@user.name} destroyed." }
+    end
   end
 
 
   private
 
   def signed_in_user
-    store_location
-    redirect_to signin_path, notice: "Please sign in to access this page." unless signed_in?
+    unless signed_in?
+      store_location
+      redirect_to signin_path, notice: "Please sign in to access this page."
+    end
   end
 
   def correct_user 

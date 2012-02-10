@@ -45,8 +45,27 @@ describe "Authentication" do
 
   describe "authorization" do
 
+    describe "for signed-in-users" do 
+      let(:user) { Factory(:user) }
+      before { sign_in user }
+      describe "they should not be able to access the signup page" do
+        before { get signup_path }
+        it { response.should redirect_to(root_path) }
+      end
+      describe "they should not be able to create a new user" do
+        before { post users_path }
+        it { response.should redirect_to(root_path) }
+      end
+    end
+
     describe "for non-signed-in users" do
       let(:user) { Factory(:user) }
+
+      describe "it should not have the signed-in users links" do 
+        before { visit root_path }
+        it { should_not have_link("Profile")}
+        it { should_not have_link("Settings")}
+      end
 
       describe "in the Users controller" do 
 
@@ -90,15 +109,19 @@ describe "Authentication" do
       describe "when attempting to visit a protected page" do
         before do
           visit edit_user_path(user)
-          fill_in "Email",    with: user.email
-          fill_in "Password", with: user.password
-          click_button "Sign in"
+          sign_in user
         end
 
         describe "after signing in" do
 
           it "should render the desired protected page" do
             page.should have_selector('title', text: 'Edit user')
+          end
+          describe "after signing in again" do 
+            before { sign_in user }
+            it "should take them to the user page" do
+              page.should have_selector('h1', text: user.name)
+            end
           end
         end
       end

@@ -18,12 +18,27 @@ describe "User pages" do
       before(:all) { 30.times { FactoryGirl.create(:user) } }
       after(:all)  { User.delete_all }
 
+      let(:first_page)  { User.paginate(page: 1) }
+      let(:second_page) { User.paginate(page: 2) }
+
       it { should have_link('Next') }
       it { should have_link('2') }
 
       it "should list each user" do
         User.all[0..2].each do |user|
           page.should have_selector('li', text: user.name)
+        end
+      end
+
+      it "should list the first page of users" do
+        first_page.each do |user|
+          page.should have_selector('li', text: user.name)
+        end
+      end
+
+      it "should not list the second page of users" do
+        second_page.each do |user|
+          page.should_not have_selector('li', text: user.name)
         end
       end
 
@@ -46,6 +61,7 @@ describe "User pages" do
 
 
   describe "Signup page" do
+
     before { visit signup_path }
     it { should have_selector('h1', text: 'Sign up' )}
 
@@ -137,6 +153,17 @@ describe "User pages" do
       describe "should stay logged in" do 
         it { should have_link('Settings', href: edit_user_path(user)) }
       end
+    end
+  end
+
+  describe "delete" do 
+    let(:admin) { Factory(:admin) }
+    describe "while logged in as an admin" do
+      before { sign_in admin }
+      it "should not be able to delete themselves" do
+        expect { delete user_path(admin) }.not_to change(User, :count)
+      end
+
     end
   end
 end
