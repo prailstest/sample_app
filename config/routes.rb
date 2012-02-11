@@ -1,6 +1,10 @@
 SampleApp::Application.routes.draw do
 
 
+  get "microposts/create"
+
+  get "microposts/destroy"
+
   root to: 'static_pages#home'
   match '/help', to: 'static_pages#help'
   match '/about', to: 'static_pages#about'
@@ -12,6 +16,8 @@ SampleApp::Application.routes.draw do
   resources :sessions, only: [:new, :create, :destroy]
   match '/signin', to: 'sessions#new'
   match '/signout', to: 'sessions#destroy'
+
+  resources :microposts, only: [:create, :destroy]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

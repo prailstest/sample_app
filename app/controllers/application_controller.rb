@@ -11,4 +11,11 @@ class ApplicationController < ActionController::Base
   def anonymous_only 
     redirect_to root_path if current_user
   end
+
+  def signed_in_user_only
+    unless signed_in?
+      store_location
+      redirect_to signin_path, notice: "Please sign in to access this page."
+    end
+  end
 end
